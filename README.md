@@ -6,3 +6,12 @@ Right now the easiest way to run it yourself is by cloning this Repo and then ru
 npm install
 npm start
 ```
+## Todos
+- [] Changing fields in the Upload Component(UploadImages.js) feels cluncy.
+- [] User Icons
+- [] Octoprint support
+  - [] Button for loading files to Octoprint
+  - [] Menu for adding Octoprint install to Profile
+  - [] Maybe Octoprint Plugin for not published Octoprint installs
+- [] Fix: On Safari the Font of the Logo doesnt load.
+- [] Fix: On Mobile the 3D Rendered Models feel bad
