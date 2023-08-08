@@ -7,7 +7,7 @@ npm install
 npm start
 ```
 ## Todos
-- [] Changing fields in the Upload Component(UploadImages.js) feels cluncy.
+- [ ] Changing fields in the Upload Component(UploadImages.js) feels cluncy.
 - [] User Icons
 - [] Octoprint support
   - [] Button for loading files to Octoprint
