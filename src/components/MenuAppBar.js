@@ -31,6 +31,7 @@ const pages = [
   {'title': 'Legal Notice', 'href': '/legal'},
   {'title': "Discord", 'href': process.env.REACT_APP_DISCORD_URL || "https://discord.gg/6Gk8rS6y", 'otherPage': true},
   {'title': "Instagram", 'href': process.env.REACT_APP_INSTAGRAM_URL || "https://www.instagram.com/itemify.eu/", 'otherPage': true}
+  {'title': "Github", 'href': process.env.REACT_APP_GITHUB_URL || "https://github.com/Itemify", 'otherPage': true}
 ];
 
 const INSERT_CREATOR = gql`
