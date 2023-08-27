@@ -6,8 +6,8 @@ import { useKeycloak } from "@react-keycloak/web";
 import LoadingComponent from '../LoadingComponent';
 
 let INSERT_ITEM = gql`
-mutation InsertItems($creator: String, $creator_name: String, $description: String, $filename: String, $item_id: Int, $name: String, $file_path: String, $license_name: String, $license_name_lower: String, $originalOn: String) {
-  insert_items(objects: {creator: $creator, description: $description, filename: $filename, item_id: $item_id, name: $name, license_name: $license_name, original_on: $originalOn}, on_conflict: {constraint: items_pkey, update_columns: [name, description]}) {
+mutation InsertItems($creator: String, $creator_name: String, $description: String, $filename: String, $image_name: String, $item_id: Int, $name: String, $file_path: String, $license_name: String, $license_name_lower: String, $originalOn: String) {
+  insert_items(objects: {creator: $creator, description: $description, filename: $filename, preview_img: $image_name, item_id: $item_id, name: $name, license_name: $license_name, original_on: $originalOn}, on_conflict: {constraint: items_pkey, update_columns: [name, description]}) {
     returning {
       item_id
       statusof
@@ -18,6 +18,11 @@ mutation InsertItems($creator: String, $creator_name: String, $description: Stri
       item_id
     }
   }
+  insert_item_images_one(object: {image_name: $image_name, item_id: $item_id}) {
+    image_name
+    item_id
+  }
+
   insert_item_tags(objects: 
     [
       {
@@ -205,7 +210,8 @@ function LabelObjectComponent(props) {
                       license_name_lower: licenseData.licenses.filter(license => license.license_name_long === inputLicense)[0].license_name.toLowerCase(),
                       commercial_usage: commercialUsage,
                       original_on: originalOn,
-                      creator_name: username
+                      creator_name: username,
+                      image_name: parseInt(id) + "/img/" +  name + ".png"
                     }
                   });
 
