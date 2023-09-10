@@ -1,20 +1,75 @@
-import { Typography, Table, TableBody, TableHead, TableRow, TableCell, Link, Switch, Box} from '@mui/material';
+import { Typography, Table, TableBody, TableHead, TableRow, TableCell, Link, Switch, Box, IconButton, Tooltip} from '@mui/material';
 import React from 'react';
 import Paper from '../utils/Paper';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { useKeycloak } from '@react-keycloak/web';
 
 function DownloadTableComponent(props) {
     const [page, setPage] = React.useState('1');
+    const [updatingFilesCount, setUpdatingFilesCount] = React.useState(0);
+    let [creator_sub, setCreatorSub] = React.useState("");
+    let [username, setUsername] = React.useState("");
+
+    const { keycloak, initialized } = useKeycloak();
+    let isLoggedIn = initialized && keycloak.authenticated;
+
+    if(isLoggedIn && keycloak.idToken) {
+      if(creator_sub === "") setCreatorSub(keycloak.idTokenParsed.sub);
+      if(username === "") setUsername(keycloak.idTokenParsed.preferred_username);
+    } else if(isLoggedIn) {
+      keycloak.loadUserProfile(function (userInfo) {
+        setCreatorSub(keycloak.profile.sub);
+        setUsername(userInfo.preferred_username);
+      }, function() {
+        console.log("failed to load user info!");
+      })
+    } 
+
+    const is_by_logged_in_user = creator_sub === props.sub;
+
+    console.log(keycloak.idTokenParsed);
+    const is_admin = isLoggedIn ? keycloak.resourceAccess.itemify.roles.some((role) => role === 'admin'): false;
 
     const handleChange = (event, newValue) => {
       setPage(newValue);
     };
 
+    function handleRefreshClick() {
+        props.itemFiles.filter(file => file.file_type === "item").forEach((element) => {
+            fetch(process.env.REACT_APP_PYTHON_BACKEND_URL + "/calculate-size", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", 'Authorization': 'Bearer ' + keycloak.token },
+                body: JSON.stringify({ id: element.item_id, file_path: element.file_path,  file_name: element.file_name}),
+              }, ).then(() => {
+                setUpdatingFilesCount(updatingFilesCount - 1);
+              })
+
+            setUpdatingFilesCount(updatingFilesCount + 1);
+        })
+      }
+
     return (<Paper bgcolor="background.secondary" sx={{mt:"8pt", p:"10pt 20pt"}}>
-        <Typography variant='h5' style={{fontWeight:500}} sx={{pb:"4pt", ml: "8px"}}>Downloads</Typography>
+        <Box sx={{display: "flex", justifyContent: "space-between"}}>
+            <Typography variant='h5' style={{fontWeight:500}} sx={{pb:"4pt", ml: "8px"}}>Downloads</Typography>
+
+
+            {
+                (is_by_logged_in_user || is_admin)  &&
+                <Box sx={{p: "4pt"}}>
+                    <Tooltip title="Refresh size and weight.">
+                        <IconButton aria-label="delete" size="small" onClick={handleRefreshClick}>
+                            <RefreshIcon fontSize="inherit" />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            }
+            
+        </Box>
+        
         
         <TabContext value={page}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

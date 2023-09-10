@@ -213,7 +213,7 @@ function ItemDescriptionComponent() {
             handlePageChange={(index) => setGalleryPage(index)}
             previewFilename={data.items_by_pk.filename} previewImage={data.items_by_pk.preview_img}/>
           
-          <DownloadTableComponent itemFiles={data.items_by_pk.item_files}/>
+          <DownloadTableComponent itemFiles={data.items_by_pk.item_files} sub={data.items_by_pk.creatorByCreator.sub}/>
 
           <DescriptionComponent itemID={id} description={data.items_by_pk.description} sub={data.items_by_pk.creatorByCreator.sub}/>
 
