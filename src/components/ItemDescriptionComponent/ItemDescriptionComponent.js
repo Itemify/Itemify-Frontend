@@ -49,6 +49,7 @@ const GET_ITEM = gql`
         dim_y
         dim_z
         filament_used
+        render_image
         quantity
         is_license_applied_once
         license_name

@@ -30,8 +30,6 @@ function DownloadTableComponent(props) {
     } 
 
     const is_by_logged_in_user = creator_sub === props.sub;
-
-    console.log(keycloak.idTokenParsed);
     const is_admin = isLoggedIn ? keycloak.resourceAccess.itemify.roles.some((role) => role === 'admin'): false;
 
     const handleChange = (event, newValue) => {

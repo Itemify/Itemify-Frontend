@@ -8,6 +8,7 @@ import { useKeycloak } from '@react-keycloak/web';
 import { gql, useMutation } from '@apollo/client';
 import { useSearchParams } from 'react-router-dom';
 import Paper from '../utils/Paper';
+import ItemGalleryModelComponent from './ItemGalleryModelComponent';
 
 const UPDATE_ITEM_PREVIEWS = gql`
   mutation UPDATE_ITEM_PREVIEWS($filename: String, $preview_img: String, $item_id: Int) {
@@ -114,45 +115,19 @@ function ItemGalleryComponent(props) {
   })); 
 
   let modelItems = props.itemFiles.filter(file => file.file_type === "item" && file.show_renderer).map((item) => ( // itemFiles & color-----------------
-    <Box bgcolor="background.secondary" className="image-gallery-thumbnail-inner" sx={{aspectRatio: "4/3", bottom: "0px", top: "0px", borderRadius: "16pt"}}>
-      <Canvas camera={{ position: [0, 100, 0] }} style={{ borderRadius: "16pt"}}>
-        <Suspense fallback={null}>
-          <color attach="background" args={["lightgrey"]} />
-          <ambientLight/>
-          <pointLight position={[10, 10, 10]}/>
-          <PresentationControls polar={[-Infinity, +Infinity]}>
-            <Model color={props.color} url={process.env.REACT_APP_S3_BUCKET_URL + item.file_path} /> 
-          </PresentationControls>
-        </Suspense>
-      </Canvas>
-
-      {
-        is_by_logged_in_user &&
-        <Tooltip title="Thumbnail">
-          <Checkbox 
-            checked={previewModel === item.file_name}
-            disabled={previewModel === item.file_name}
-            onChange={(event) => onPreviewModelChange(item.file_hasname)}
-            sx={{position:"absolute", right: "8pt", top: "8pt"}} />
-        </Tooltip>
-        }
-
-    </Box>
+    <ItemGalleryModelComponent item={item} color={props.color} 
+      previewModel={previewModel}
+      is_by_logged_in_user={is_by_logged_in_user} 
+      onPreviewModelChange={onPreviewModelChange}
+      onPreviewIMGChange={onPreviewIMGChange}/>
   ));
 
   let modelItemsThumbnails = props.itemFiles.filter(file => file.file_type === "item" && file.show_renderer).map((item) => ( // itemFiles & color-----------------
-    <Box bgcolor="background.secondary" className="image-gallery-thumbnail-inner" sx={{aspectRatio: "4/3", bottom: "0px", top: "0px",  borderRadius: "8pt"}}>
-      <Canvas camera={{ position: [0, 100, 0] }} style={{ borderRadius: "8pt"}}>
-        <Suspense fallback={null}>
-          <color attach="background" args={["lightgrey"]} />
-          <ambientLight/>
-          <pointLight position={[10, 10, 10]}/>
-          <PresentationControls polar={[-Infinity, +Infinity]}>
-            <Model color={props.color} url={process.env.REACT_APP_S3_BUCKET_URL + item.file_path} /> 
-          </PresentationControls>
-        </Suspense>
-      </Canvas>
-    </Box>
+    <ItemGalleryModelComponent item={item} isThumbnail color={props.color} 
+      previewModel={previewModel}
+      is_by_logged_in_user={is_by_logged_in_user} 
+      onPreviewModelChange={onPreviewModelChange}
+      onPreviewIMGChange={onPreviewIMGChange}/>
   ));
 
   let item_frames = modelItems.map((item, index) => ({
