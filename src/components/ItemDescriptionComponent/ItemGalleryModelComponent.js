@@ -9,7 +9,6 @@ import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 
 
 export default function ItemGalleryModelComponent({item, isThumbnail, is_by_logged_in_user, color, previewModel, previewIMG, onPreviewModelChange, onPreviewIMGChange}) {
-    console.log(item);
     const [mode, setMode] = useState("img")
 
     return (

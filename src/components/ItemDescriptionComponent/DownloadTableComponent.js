@@ -47,18 +47,15 @@ function DownloadTableComponent(props) {
                 headers: { "Content-Type": "application/json", 'Authorization': 'Bearer ' + keycloak.token },
                 body: JSON.stringify({ id: element.item_id, file_path: element.file_path,  file_name: element.file_name}),
               }, ).then(() => {
-                console.log("Count: " + updatingFilesCount);
-                setUpdatingFilesCount(updatingFilesCount - 1);
+                setUpdatingFilesCount(props.itemFiles.filter(file => file.file_type === "item").length - index);
               })
         }, 1000 * ( index + 1));
     }
 
-    function handleRefreshClick() {
-        setUpdatingFilesCount(props.itemFiles.filter(file => file.file_type === "item").length);
-        console.log("Count: " + updatingFilesCount);
+    async function handleRefreshClick() {
+        await setUpdatingFilesCount(props.itemFiles.filter(file => file.file_type === "item").length);
 
         props.itemFiles.filter(file => file.file_type === "item").forEach((element, index) => {
-            console.log("Count: " + updatingFilesCount);
             fetchAndUpdate(element, index);
         })
       }
@@ -69,7 +66,7 @@ function DownloadTableComponent(props) {
 
 
             {
-                (is_by_logged_in_user || is_admin) && updatingFilesCount === 0  &&
+                (is_by_logged_in_user || is_admin) && updatingFilesCount <= 0  &&
                 <Box sx={{p: "4pt"}}>
                     <Tooltip title="Refresh size and weight.">
                         <IconButton aria-label="delete" size="small" onClick={handleRefreshClick}>
@@ -80,7 +77,7 @@ function DownloadTableComponent(props) {
             }
 
             {
-                (is_by_logged_in_user || is_admin) && updatingFilesCount > 0  &&
+                (is_by_logged_in_user || is_admin) && updatingFilesCount &&
                 <Box sx={{p: "4pt"}}>
                     {updatingFilesCount}
                 </Box>
