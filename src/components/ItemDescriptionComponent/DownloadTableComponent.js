@@ -50,7 +50,7 @@ function DownloadTableComponent(props) {
                 console.log("Count: " + updatingFilesCount);
                 setUpdatingFilesCount(updatingFilesCount - 1);
               })
-        }, 1000 * index);
+        }, 1000 * ( index + 1));
     }
 
     function handleRefreshClick() {
