@@ -8,6 +8,10 @@ import TabPanel from '@mui/lab/TabPanel';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useKeycloak } from '@react-keycloak/web';
 
+function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
+
 function DownloadTableComponent(props) {
     const [page, setPage] = React.useState('1');
     const [updatingFilesCount, setUpdatingFilesCount] = React.useState(0);
@@ -36,8 +40,8 @@ function DownloadTableComponent(props) {
       setPage(newValue);
     };
 
-    function handleRefreshClick() {
-        props.itemFiles.filter(file => file.file_type === "item").forEach((element) => {
+    function fetchAndUpdate(element, index) {
+        setTimeout(function () {
             fetch(process.env.REACT_APP_PYTHON_BACKEND_URL + "/calculate-size", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", 'Authorization': 'Bearer ' + keycloak.token },
@@ -45,8 +49,14 @@ function DownloadTableComponent(props) {
               }, ).then(() => {
                 setUpdatingFilesCount(updatingFilesCount - 1);
               })
+        }, 1000 * index);
+    }
 
-            setUpdatingFilesCount(updatingFilesCount + 1);
+    function handleRefreshClick() {
+        setUpdatingFilesCount(props.itemFiles.filter(file => file.file_type === "item").length);
+
+        props.itemFiles.filter(file => file.file_type === "item").forEach((element, index) => {
+            fetchAndUpdate(element, index);
         })
       }
 
@@ -56,13 +66,20 @@ function DownloadTableComponent(props) {
 
 
             {
-                (is_by_logged_in_user || is_admin)  &&
+                (is_by_logged_in_user || is_admin) && updatingFilesCount === 0  &&
                 <Box sx={{p: "4pt"}}>
                     <Tooltip title="Refresh size and weight.">
                         <IconButton aria-label="delete" size="small" onClick={handleRefreshClick}>
                             <RefreshIcon fontSize="inherit" />
                         </IconButton>
                     </Tooltip>
+                </Box>
+            }
+
+            {
+                (is_by_logged_in_user || is_admin) && updatingFilesCount > 0  &&
+                <Box sx={{p: "4pt"}}>
+                    {updatingFilesCount}
                 </Box>
             }
             
