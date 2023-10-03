@@ -77,7 +77,7 @@ function DownloadTableComponent(props) {
             }
 
             {
-                (is_by_logged_in_user || is_admin) && updatingFilesCount &&
+                (is_by_logged_in_user || is_admin) && updatingFilesCount > 0 &&
                 <Box sx={{p: "4pt"}}>
                     {updatingFilesCount}
                 </Box>
