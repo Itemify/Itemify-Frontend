@@ -55,8 +55,10 @@ function DownloadTableComponent(props) {
 
     function handleRefreshClick() {
         setUpdatingFilesCount(props.itemFiles.filter(file => file.file_type === "item").length);
+        console.log("Count: " + updatingFilesCount);
 
         props.itemFiles.filter(file => file.file_type === "item").forEach((element, index) => {
+            console.log("Count: " + updatingFilesCount);
             fetchAndUpdate(element, index);
         })
       }
