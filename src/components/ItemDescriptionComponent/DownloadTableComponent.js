@@ -47,6 +47,7 @@ function DownloadTableComponent(props) {
                 headers: { "Content-Type": "application/json", 'Authorization': 'Bearer ' + keycloak.token },
                 body: JSON.stringify({ id: element.item_id, file_path: element.file_path,  file_name: element.file_name}),
               }, ).then(() => {
+                console.log("Count: " + updatingFilesCount);
                 setUpdatingFilesCount(updatingFilesCount - 1);
               })
         }, 1000 * index);
