@@ -12,3 +12,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: 'kanitblack_italic';
+  src: url('../public/Kanit/Webfontkit/kanit-blackitalic-webfont.woff2') format('woff2'),
+       url('../public/Kanit/Webfontkit/kanit-blackitalic-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}

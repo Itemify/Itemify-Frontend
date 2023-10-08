@@ -181,7 +181,7 @@ const ResponsiveAppBar = () => {
             <Link component={RouterLink} 
               sx={{
                 color: "white",
-                fontSize: {xs: "24pt", md: "32pt" }, fontFamily: "Kanit, sans-serif",
+                fontSize: {xs: "24pt", md: "32pt" }, fontFamily: "kanitblack_italic",
                 textAlign: "right",
                 pr: "8pt",
                 width: "fit-content",
