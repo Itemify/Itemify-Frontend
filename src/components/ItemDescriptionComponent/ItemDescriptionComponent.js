@@ -13,6 +13,7 @@ import LoadingComponent from '../LoadingComponent';
 import { useTheme } from '@emotion/react';
 import Paper from '../utils/Paper';
 import UserAvatar from '../UserSpecifics/UserAvatar';
+import UnPublishComponent from './UnPublishComponent';
 
 const GET_ITEM = gql`
   query get_item_description($id: Int!) {
@@ -21,6 +22,7 @@ const GET_ITEM = gql`
       original_on
       description
       preview_img
+      published
       creatorByCreator {
         sub
         creator_name
@@ -264,6 +266,8 @@ function ItemDescriptionComponent() {
             </Paper>
           </Box>
         </Box>
+
+        <UnPublishComponent published={data.items_by_pk.published} id={id} sub={data.items_by_pk.creatorByCreator.sub}/>
       </Box>
       
       
