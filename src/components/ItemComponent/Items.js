@@ -102,7 +102,7 @@ function Items(props) {
     {data.items_with_views.map(({ creator, description, item_id, name, statusof, filename, preview_img, creatorByCreator}) => (
       <Grid item key={item_id} 
         sx={{cursor: "pointer", overflow: "hidden", p: "4pt !important"}} 
-        xs={12} sm={6} lg={4} xl={3} xxl={2} onClick={() => navigate("/item/" + item_id, {replace: "false"})}>
+        xs={12} sm={6} lg={4} xl={3} xxl={2} onClick={() => navigate("/item/" + item_id)}>
 
         <Box>
             <Box component="img" loading="lazy" sx={{width: "100%", aspectRatio: "4/3", objectFit: "cover", borderRadius: "3%"}} src={process.env.REACT_APP_S3_BUCKET_URL + preview_img} alt={name}/>

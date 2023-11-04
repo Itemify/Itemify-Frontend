@@ -148,7 +148,7 @@ function ItemComponent() {
           </Box>
           
 
-          <Fab color="primary" onClick={() => navigate("/upload", {replace: true})} aria-label="add" sx={{
+          <Fab color="primary" onClick={() => navigate("/upload")} aria-label="add" sx={{
             position: 'fixed !important',
             bottom: "10%",
             right: "10%",
