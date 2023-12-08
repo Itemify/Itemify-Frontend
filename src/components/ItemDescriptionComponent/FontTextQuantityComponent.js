@@ -8,7 +8,8 @@ function FontTextQuantityComponent(props) {
     const [letters, setLetters] = React.useState("Itemify");
 
     useEffect(() => {
-        props.setQuantity("Itemify");
+        if(props.isFont)
+            props.setQuantity("Itemify");
     }, []);
 
     return props.isFont &&
