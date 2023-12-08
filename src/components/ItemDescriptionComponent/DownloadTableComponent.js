@@ -1,4 +1,4 @@
-import { Typography, Table, TableBody, TableHead, TableRow, TableCell, Link, Switch, Box, IconButton, Tooltip} from '@mui/material';
+import { Typography, Table, TableBody, TableHead, TableRow, TableCell, Link, Switch, Box, IconButton, Tooltip, TextField} from '@mui/material';
 import React from 'react';
 import Paper from '../utils/Paper';
 import Tab from '@mui/material/Tab';
@@ -14,6 +14,7 @@ function delay(time) {
 
 function DownloadTableComponent(props) {
     const [page, setPage] = React.useState('1');
+    const [letters, setLetters] = React.useState("ABC")
     const [updatingFilesCount, setUpdatingFilesCount] = React.useState(0);
     let [creator_sub, setCreatorSub] = React.useState("");
     let [username, setUsername] = React.useState("");

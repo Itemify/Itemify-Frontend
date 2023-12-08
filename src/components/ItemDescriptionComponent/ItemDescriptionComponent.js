@@ -2,7 +2,7 @@ import { Box, Typography, Button, Avatar, IconButton, CircularProgress, RadioGro
 import React, { Suspense, useEffect } from 'react';
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useParams } from 'react-router-dom';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useApolloClient, useQuery } from '@apollo/client';
 import DescriptionComponent  from './DescriptionComponent'
 import DownloadTableComponent from './DownloadTableComponent';
 import ItemTagsComponent from './ItemTagsComponent';
@@ -14,6 +14,7 @@ import { useTheme } from '@emotion/react';
 import Paper from '../utils/Paper';
 import UserAvatar from '../UserSpecifics/UserAvatar';
 import UnPublishComponent from './UnPublishComponent';
+import FontTextQuantityComponent from './FontTextQuantityComponent';
 
 const GET_ITEM = gql`
   query get_item_description($id: Int!) {
@@ -58,6 +59,9 @@ const GET_ITEM = gql`
         license_price
         show_renderer
       }
+      item_tags {
+        item_tag
+      }
     }
 
     materials {
@@ -88,7 +92,9 @@ function ItemDescriptionComponent() {
     let { id } = useParams();
 
     const { loading, error, data } = useQuery(GET_ITEM, { 
-      variables: {id}
+      variables: {id},
+      fetchPolcy: "cache-first",
+      nextFetchPolicy: 'cache-only'
     });
 
     const _material = searchParams.get("material");
@@ -96,6 +102,8 @@ function ItemDescriptionComponent() {
     const _color = searchParams.get("color");
     const [color, setColor] = React.useState(rgb(30,30,30))
     const [galleryPage, setGalleryPage] = React.useState(0);
+
+    const [quantities, setQuantities] = React.useState([]);
 
     if(material !== (_material ? _material : "PLA"))
       setMaterial(_material ? _material : "PLA")
@@ -114,7 +122,7 @@ function ItemDescriptionComponent() {
     if (loading) return <LoadingComponent/>;
     if (error) return <p>Error: {error}</p>;
 
-
+    let item_files = quantities.length > 0 ? quantities : data.items_by_pk.item_files.filter(file => file.file_type === "item");
 
     function getMaterial() {
       return data.materials.filter((mat) => mat.material_name === material)[0]
@@ -142,7 +150,7 @@ function ItemDescriptionComponent() {
       setColor(event.target.value.split(" ")[1])
     };
 
-    const print_dimensions = data.items_by_pk.item_files.filter(file => file.file_type === "item").reduce(
+    const print_dimensions = item_files.reduce(
       function (previousValue, currentValue) {
         return {
           dim_x: Math.round(Math.max(previousValue.dim_x, currentValue.dim_x)), 
@@ -152,7 +160,7 @@ function ItemDescriptionComponent() {
       }, 
       {dim_x: 0, dim_y: 0, dim_z: 0});
 
-    const print_weight = data.items_by_pk.item_files.filter(file => file.file_type === "item").map(
+    let print_weight = item_files.map(
       row => row.filament_used * row.quantity
     ).reduce((a, b) => {
       return a + (typeof(b) == "undefined" ? 0 : b);
@@ -160,17 +168,29 @@ function ItemDescriptionComponent() {
       0
     ) * 3 ;
 
-    const overallQuantity = data.items_by_pk.item_files.filter(file => file.file_type === "item").map(
+    let overallQuantity = item_files.map(
       row => row.quantity
     ).reduce((a, b) => a + b);
 
-    const license_cost = data.items_by_pk.item_files.map(file => {
+    let license_cost = item_files.map(file => {
       return (file.is_license_applied_once ? 1 : file.quantity) * file.license_price;
     }).reduce((partialSum, a) => partialSum + a, 0);
 
-    const print_price = license_cost + (getMaterial().material_price_per_print * overallQuantity + getMaterial().material_price_per_gram * print_weight);
+    let print_price = license_cost + (getMaterial().material_price_per_print * overallQuantity + getMaterial().material_price_per_gram * print_weight);
+    console.log(data);
+
 
     let filament_id = data.filaments.find(e => color === rgb(e.color_r, e.color_g, e.color_b) && e.material === material).filament_id;
+
+    let setCachedQuantities = (text) => {
+      setQuantities(item_files.map(file => {
+        return {
+          ...file,
+          quantity: text.split("").filter((x => x === file.file_name.split(".")[0])).length,
+        };
+      }))
+    }
+    
 
     return (
       <Box sx={{display:"flex", gap: "8pt", marginLeft: "auto", marginRight: "auto", width:"100%", maxWidth: "1200px", marginBottom: "16pt", flexWrap:{xs: "wrap-reverse", md: "nowrap"}, justifyContent: "center"}}>
@@ -197,7 +217,7 @@ function ItemDescriptionComponent() {
               </Box> }
             </Paper>
 
-            <ItemTagsComponent tags={data.items_by_pk.item_tags} id={id}/>
+            <ItemTagsComponent id={id}/>
           </Box>
         </Box>
 
@@ -215,8 +235,10 @@ function ItemDescriptionComponent() {
             page={galleryPage}
             handlePageChange={(index) => setGalleryPage(index)}
             previewFilename={data.items_by_pk.filename} previewImage={data.items_by_pk.preview_img}/>
+
+          <FontTextQuantityComponent setQuantity={setCachedQuantities} isFont={data.items_by_pk.item_tags.filter((x) => x.item_tag === "font").length > 0}/>
           
-          <DownloadTableComponent itemFiles={data.items_by_pk.item_files} sub={data.items_by_pk.creatorByCreator.sub}/>
+          <DownloadTableComponent itemFiles={quantities.length > 0 ? quantities : data.items_by_pk.item_files} sub={data.items_by_pk.creatorByCreator.sub}/>
 
           <DescriptionComponent itemID={id} description={data.items_by_pk.description} sub={data.items_by_pk.creatorByCreator.sub}/>
 
