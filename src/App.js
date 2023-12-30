@@ -40,7 +40,8 @@ const PaymentCompletedComponent = lazy(() => import('./components/Payment/Paymen
 const LegalNoticeComponent = lazy(() => import('./components/LegalNoticeComponent'));
 const PrivacyPolicyComponent = lazy(() => import('./components/PrivacyPolicyComponent/PrivacyPolicyComponent'));
 const AccountComponent = lazy(() => import('./components/AccountComponent/AccountComponent'));
-const LoginPopup = lazy(() => import('./components/Dialogs/LoginDialog/LoginDialog'))
+const LoginPopup = lazy(() => import('./components/Dialogs/LoginDialog/LoginDialog'));
+const PrintingQueueComponent = lazy(() => import('./components/PrintingQueueComponent/PrintingQueueComponent'));
 
 
 const apolloCache = new InMemoryCache();
@@ -173,6 +174,7 @@ function App() {
                 <Route path='/privacy' element={<PrivacyPolicyComponent/>} />
                 <Route path='/account/:id' element={<AccountComponent/>} />
                 <Route path='/logo' element={<Logo/>} />
+                <Route path='/queue' element={<PrintingQueueComponent/>} />
               </Routes>
             </Suspense>
           </BrowserRouter>
