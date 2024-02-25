@@ -1,4 +1,4 @@
-import { Typography, useTheme } from '@mui/material';
+import { Divider, Link, Typography, useTheme } from '@mui/material';
 import React from 'react';
 import Paper from '../utils/Paper';
 import HelpIcon from '@mui/icons-material/Help';
@@ -12,6 +12,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import PrinterControlsComponent from './PrinterControlsCoponent';
 
 const GET_PRINTER_AND_QUEUE = gql`
   query PRINTER_AND_QUEUE {
@@ -85,9 +86,25 @@ function PrintingQueueComponent(props) {
           data.printer.map((printer) => (
             <Paper bgcolor="background.secondary" sx={{p: "8pt", mt: "8pt", display: "flex", flexDirection: "column"}}>
               <Typography variant='h5' sx={{p:"10pt 32pt", textAlign:'center', fontWeight:700, overflow: "hidden"}}>{printer.printer_name}</Typography>
+              <Box sx={{display: "flex", justifyContent: "space-between", padding: "0px 8pt", mb: "8pt"}}>
+                <Box sx={{mr: "auto", height: "max-content"}}>
+                  <Typography sx={{fontWeight: "700"}}>Printer Controls</Typography>
+                </Box>
+                
+                <PrinterControlsComponent printerid={printer.printer_id}/>
+              </Box>
 
+              <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0px 8pt", mb: "8pt"}}>
+                <Typography sx={{fontWeight: "700"}}>Printer Model</Typography>
+                <Typography>{printer.printer_model}</Typography>
+              </Box>
 
-              <TableContainer component={Paper}>
+              <Box sx={{display: "flex", justifyContent: "space-between", padding: "0px 8pt", mb: "8pt"}}>
+                <Typography sx={{fontWeight: "700"}}>Printer ID</Typography>
+                <Typography>{printer.printer_id}</Typography>
+              </Box>
+
+              <TableContainer>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                   <TableHead>
                     <TableRow>
@@ -96,6 +113,9 @@ function PrintingQueueComponent(props) {
                       <TableCell align="right">Priority</TableCell>
                       <TableCell align="right">Job ID</TableCell>
                       <TableCell align="right">Creation Time</TableCell>
+                      <TableCell align="right">Cancel</TableCell>
+                      <TableCell align="right">Duplicate</TableCell>
+                      <TableCell align="right">Printer</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -107,7 +127,11 @@ function PrintingQueueComponent(props) {
                         <TableCell component="th" scope="row">
                           {index}
                         </TableCell>
-                        <TableCell align="right">{row.gcode_file.replace("https://itemify-models.fra1.cdn.digitaloceanspaces.com/", "")}</TableCell>
+                        <TableCell align="right">
+                          <Link href={row.gcode_file}>
+                          {row.gcode_file.replace("https://itemify-models.fra1.cdn.digitaloceanspaces.com/", "")}
+                          </Link>
+                        </TableCell>
                         <TableCell align="right">{row.priority}</TableCell>
                         <TableCell align="right">{row.job_id}</TableCell>
                         <TableCell align="right">{new Date(row.creation_ts).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</TableCell>
